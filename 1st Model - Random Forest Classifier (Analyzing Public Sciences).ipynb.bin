@@ -1,0 +1,2345 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "676a114a",
+   "metadata": {},
+   "source": [
+    "# Import the required libraries"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "946fdaca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np \n",
+    "import pandas as pd \n",
+    "import matplotlib.pyplot as plt \n",
+    "%matplotlib inline\n",
+    "import seaborn as sns\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.metrics import r2_score\n",
+    "from sklearn.metrics import confusion_matrix, accuracy_score"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cfd38feb",
+   "metadata": {},
+   "source": [
+    "# Import the dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "0b3c4d13",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data=pd.read_csv(\"New Stock Data.csv\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3b0dd77e",
+   "metadata": {},
+   "source": [
+    "# Data Informations"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "37963f7c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Date</th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "      <th>Symbol</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>08-02-2019</td>\n",
+       "      <td>48.599998</td>\n",
+       "      <td>48.930000</td>\n",
+       "      <td>48.470001</td>\n",
+       "      <td>48.910000</td>\n",
+       "      <td>46.454433</td>\n",
+       "      <td>906700.0</td>\n",
+       "      <td>NVO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>11-02-2019</td>\n",
+       "      <td>48.680000</td>\n",
+       "      <td>48.810001</td>\n",
+       "      <td>48.419998</td>\n",
+       "      <td>48.660000</td>\n",
+       "      <td>46.216980</td>\n",
+       "      <td>1001200.0</td>\n",
+       "      <td>NVO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>12-02-2019</td>\n",
+       "      <td>48.990002</td>\n",
+       "      <td>49.480000</td>\n",
+       "      <td>48.830002</td>\n",
+       "      <td>49.400002</td>\n",
+       "      <td>46.919834</td>\n",
+       "      <td>868600.0</td>\n",
+       "      <td>NVO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>13-02-2019</td>\n",
+       "      <td>49.040001</td>\n",
+       "      <td>49.279999</td>\n",
+       "      <td>49.020000</td>\n",
+       "      <td>49.090000</td>\n",
+       "      <td>46.625393</td>\n",
+       "      <td>868900.0</td>\n",
+       "      <td>NVO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>20-02-2019</td>\n",
+       "      <td>49.840000</td>\n",
+       "      <td>50.009998</td>\n",
+       "      <td>49.549999</td>\n",
+       "      <td>49.700001</td>\n",
+       "      <td>47.204773</td>\n",
+       "      <td>1063800.0</td>\n",
+       "      <td>NVO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>89924</th>\n",
+       "      <td>02-02-2022</td>\n",
+       "      <td>15.300000</td>\n",
+       "      <td>15.300000</td>\n",
+       "      <td>13.760000</td>\n",
+       "      <td>13.870000</td>\n",
+       "      <td>13.870000</td>\n",
+       "      <td>65500.0</td>\n",
+       "      <td>ANVS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>89925</th>\n",
+       "      <td>03-02-2022</td>\n",
+       "      <td>13.500000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>13.310000</td>\n",
+       "      <td>13.640000</td>\n",
+       "      <td>13.640000</td>\n",
+       "      <td>39500.0</td>\n",
+       "      <td>ANVS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>89926</th>\n",
+       "      <td>04-02-2022</td>\n",
+       "      <td>13.620000</td>\n",
+       "      <td>14.920000</td>\n",
+       "      <td>13.530000</td>\n",
+       "      <td>14.720000</td>\n",
+       "      <td>14.720000</td>\n",
+       "      <td>50700.0</td>\n",
+       "      <td>ANVS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>89927</th>\n",
+       "      <td>07-02-2022</td>\n",
+       "      <td>14.590000</td>\n",
+       "      <td>16.160000</td>\n",
+       "      <td>14.470000</td>\n",
+       "      <td>14.960000</td>\n",
+       "      <td>14.960000</td>\n",
+       "      <td>74000.0</td>\n",
+       "      <td>ANVS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>89928</th>\n",
+       "      <td>08-02-2022</td>\n",
+       "      <td>14.800000</td>\n",
+       "      <td>15.200000</td>\n",
+       "      <td>14.010000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>36000.0</td>\n",
+       "      <td>ANVS</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>89929 rows × 8 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Date       Open       High        Low      Close  Adj Close  \\\n",
+       "0      08-02-2019  48.599998  48.930000  48.470001  48.910000  46.454433   \n",
+       "1      11-02-2019  48.680000  48.810001  48.419998  48.660000  46.216980   \n",
+       "2      12-02-2019  48.990002  49.480000  48.830002  49.400002  46.919834   \n",
+       "3      13-02-2019  49.040001  49.279999  49.020000  49.090000  46.625393   \n",
+       "4      20-02-2019  49.840000  50.009998  49.549999  49.700001  47.204773   \n",
+       "...           ...        ...        ...        ...        ...        ...   \n",
+       "89924  02-02-2022  15.300000  15.300000  13.760000  13.870000  13.870000   \n",
+       "89925  03-02-2022  13.500000  14.000000  13.310000  13.640000  13.640000   \n",
+       "89926  04-02-2022  13.620000  14.920000  13.530000  14.720000  14.720000   \n",
+       "89927  07-02-2022  14.590000  16.160000  14.470000  14.960000  14.960000   \n",
+       "89928  08-02-2022  14.800000  15.200000  14.010000  14.700000  14.700000   \n",
+       "\n",
+       "          Volume Symbol  \n",
+       "0       906700.0    NVO  \n",
+       "1      1001200.0    NVO  \n",
+       "2       868600.0    NVO  \n",
+       "3       868900.0    NVO  \n",
+       "4      1063800.0    NVO  \n",
+       "...          ...    ...  \n",
+       "89924    65500.0   ANVS  \n",
+       "89925    39500.0   ANVS  \n",
+       "89926    50700.0   ANVS  \n",
+       "89927    74000.0   ANVS  \n",
+       "89928    36000.0   ANVS  \n",
+       "\n",
+       "[89929 rows x 8 columns]"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "7a9bc1f0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 89929 entries, 0 to 89928\n",
+      "Data columns (total 8 columns):\n",
+      " #   Column     Non-Null Count  Dtype  \n",
+      "---  ------     --------------  -----  \n",
+      " 0   Date       89929 non-null  object \n",
+      " 1   Open       89929 non-null  float64\n",
+      " 2   High       89929 non-null  float64\n",
+      " 3   Low        89929 non-null  float64\n",
+      " 4   Close      89929 non-null  float64\n",
+      " 5   Adj Close  89929 non-null  float64\n",
+      " 6   Volume     89929 non-null  float64\n",
+      " 7   Symbol     89929 non-null  object \n",
+      "dtypes: float64(6), object(2)\n",
+      "memory usage: 5.5+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "65f72c80",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(89929, 8)"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "id": "732f3e74",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "ZEAL    757\n",
+       "MOR     757\n",
+       "MGTX    756\n",
+       "YMAB    756\n",
+       "CRNX    755\n",
+       "       ... \n",
+       "XLO      75\n",
+       "IOBT     63\n",
+       "VIGL     21\n",
+       "AMLX     21\n",
+       "ASND     19\n",
+       "Name: Symbol, Length: 198, dtype: int64"
+      ]
+     },
+     "execution_count": 56,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['Symbol'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "a628cbcc",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "757"
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.Date.nunique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c2dc0c7b",
+   "metadata": {},
+   "source": [
+    "# Taking only one symbol"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f26cbf16",
+   "metadata": {},
+   "source": [
+    "Here we can see that there are only 757 unique dates in whole dataset. Therefore we should do modelling for only one specific Symbol which has 757 data points."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "106746e7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data= data[data['Symbol']=='ZEAL'].drop('Symbol',axis=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "305c51d3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Date</th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>46674</th>\n",
+       "      <td>08-02-2019</td>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46675</th>\n",
+       "      <td>11-02-2019</td>\n",
+       "      <td>14.250000</td>\n",
+       "      <td>14.420000</td>\n",
+       "      <td>14.250000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46676</th>\n",
+       "      <td>12-02-2019</td>\n",
+       "      <td>14.310000</td>\n",
+       "      <td>14.410000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>14.320000</td>\n",
+       "      <td>14.320000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46677</th>\n",
+       "      <td>13-02-2019</td>\n",
+       "      <td>14.060000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>14.050000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46678</th>\n",
+       "      <td>14-02-2019</td>\n",
+       "      <td>14.520000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>14.497000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47426</th>\n",
+       "      <td>02-02-2022</td>\n",
+       "      <td>19.639999</td>\n",
+       "      <td>19.639999</td>\n",
+       "      <td>19.200001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47427</th>\n",
+       "      <td>03-02-2022</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47428</th>\n",
+       "      <td>04-02-2022</td>\n",
+       "      <td>18.490000</td>\n",
+       "      <td>18.500999</td>\n",
+       "      <td>17.968000</td>\n",
+       "      <td>18.010000</td>\n",
+       "      <td>18.010000</td>\n",
+       "      <td>20800.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47429</th>\n",
+       "      <td>07-02-2022</td>\n",
+       "      <td>18.379999</td>\n",
+       "      <td>18.410000</td>\n",
+       "      <td>18.219999</td>\n",
+       "      <td>18.350000</td>\n",
+       "      <td>18.350000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47430</th>\n",
+       "      <td>08-02-2022</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>757 rows × 7 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Date       Open       High        Low      Close  Adj Close  \\\n",
+       "46674  08-02-2019  14.020000  14.020000  14.000000  14.000000  14.000000   \n",
+       "46675  11-02-2019  14.250000  14.420000  14.250000  14.270000  14.270000   \n",
+       "46676  12-02-2019  14.310000  14.410000  14.270000  14.320000  14.320000   \n",
+       "46677  13-02-2019  14.060000  14.301000  14.050000  14.301000  14.301000   \n",
+       "46678  14-02-2019  14.520000  14.700000  14.497000  14.700000  14.700000   \n",
+       "...           ...        ...        ...        ...        ...        ...   \n",
+       "47426  02-02-2022  19.639999  19.639999  19.200001  19.360001  19.360001   \n",
+       "47427  03-02-2022  19.360001  19.360001  19.360001  19.360001  19.360001   \n",
+       "47428  04-02-2022  18.490000  18.500999  17.968000  18.010000  18.010000   \n",
+       "47429  07-02-2022  18.379999  18.410000  18.219999  18.350000  18.350000   \n",
+       "47430  08-02-2022  18.488001  18.488001  18.488001  18.488001  18.488001   \n",
+       "\n",
+       "        Volume  \n",
+       "46674  16300.0  \n",
+       "46675  16300.0  \n",
+       "46676  16300.0  \n",
+       "46677  16300.0  \n",
+       "46678  16300.0  \n",
+       "...        ...  \n",
+       "47426  16300.0  \n",
+       "47427  16300.0  \n",
+       "47428  20800.0  \n",
+       "47429  16300.0  \n",
+       "47430  16300.0  \n",
+       "\n",
+       "[757 rows x 7 columns]"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "38b4b8ea",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>757.000000</td>\n",
+       "      <td>757.000000</td>\n",
+       "      <td>757.000000</td>\n",
+       "      <td>757.000000</td>\n",
+       "      <td>757.000000</td>\n",
+       "      <td>757.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>29.669551</td>\n",
+       "      <td>29.995822</td>\n",
+       "      <td>29.293176</td>\n",
+       "      <td>29.631906</td>\n",
+       "      <td>29.631906</td>\n",
+       "      <td>20414.266843</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>6.915429</td>\n",
+       "      <td>7.008667</td>\n",
+       "      <td>6.826851</td>\n",
+       "      <td>6.922846</td>\n",
+       "      <td>6.922846</td>\n",
+       "      <td>26250.349101</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>16300.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>22.650000</td>\n",
+       "      <td>22.850000</td>\n",
+       "      <td>22.469999</td>\n",
+       "      <td>22.629999</td>\n",
+       "      <td>22.629999</td>\n",
+       "      <td>16300.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>31.480000</td>\n",
+       "      <td>31.790001</td>\n",
+       "      <td>31.010000</td>\n",
+       "      <td>31.230000</td>\n",
+       "      <td>31.230000</td>\n",
+       "      <td>16300.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>35.299999</td>\n",
+       "      <td>35.730000</td>\n",
+       "      <td>34.810001</td>\n",
+       "      <td>35.259998</td>\n",
+       "      <td>35.259998</td>\n",
+       "      <td>16300.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>42.869999</td>\n",
+       "      <td>44.599998</td>\n",
+       "      <td>42.630001</td>\n",
+       "      <td>44.250000</td>\n",
+       "      <td>44.250000</td>\n",
+       "      <td>551900.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Open        High         Low       Close   Adj Close  \\\n",
+       "count  757.000000  757.000000  757.000000  757.000000  757.000000   \n",
+       "mean    29.669551   29.995822   29.293176   29.631906   29.631906   \n",
+       "std      6.915429    7.008667    6.826851    6.922846    6.922846   \n",
+       "min     14.020000   14.020000   14.000000   14.000000   14.000000   \n",
+       "25%     22.650000   22.850000   22.469999   22.629999   22.629999   \n",
+       "50%     31.480000   31.790001   31.010000   31.230000   31.230000   \n",
+       "75%     35.299999   35.730000   34.810001   35.259998   35.259998   \n",
+       "max     42.869999   44.599998   42.630001   44.250000   44.250000   \n",
+       "\n",
+       "              Volume  \n",
+       "count     757.000000  \n",
+       "mean    20414.266843  \n",
+       "std     26250.349101  \n",
+       "min     16300.000000  \n",
+       "25%     16300.000000  \n",
+       "50%     16300.000000  \n",
+       "75%     16300.000000  \n",
+       "max    551900.000000  "
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0bd07cc",
+   "metadata": {},
+   "source": [
+    "# Insert new column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "e6c286dd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data['Change %']= data['Close'].pct_change()*100"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "id": "46767207",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Date</th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "      <th>Change %</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>46674</th>\n",
+       "      <td>08-02-2019</td>\n",
+       "      <td>14.02</td>\n",
+       "      <td>14.020</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46675</th>\n",
+       "      <td>11-02-2019</td>\n",
+       "      <td>14.25</td>\n",
+       "      <td>14.420</td>\n",
+       "      <td>14.250</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>1.928575</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46676</th>\n",
+       "      <td>12-02-2019</td>\n",
+       "      <td>14.31</td>\n",
+       "      <td>14.410</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.350380</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46677</th>\n",
+       "      <td>13-02-2019</td>\n",
+       "      <td>14.06</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.050</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>-0.132682</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46678</th>\n",
+       "      <td>14-02-2019</td>\n",
+       "      <td>14.52</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.497</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>2.790016</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Date   Open    High     Low   Close  Adj Close   Volume  Change %\n",
+       "46674  08-02-2019  14.02  14.020  14.000  14.000     14.000  16300.0       NaN\n",
+       "46675  11-02-2019  14.25  14.420  14.250  14.270     14.270  16300.0  1.928575\n",
+       "46676  12-02-2019  14.31  14.410  14.270  14.320     14.320  16300.0  0.350380\n",
+       "46677  13-02-2019  14.06  14.301  14.050  14.301     14.301  16300.0 -0.132682\n",
+       "46678  14-02-2019  14.52  14.700  14.497  14.700     14.700  16300.0  2.790016"
+      ]
+     },
+     "execution_count": 62,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c4c690bd",
+   "metadata": {},
+   "source": [
+    "# Fill Null Values with 0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "4ff8d455",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data['Change %'] = data['Change %'].fillna(0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "163b96de",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Date         0\n",
+       "Open         0\n",
+       "High         0\n",
+       "Low          0\n",
+       "Close        0\n",
+       "Adj Close    0\n",
+       "Volume       0\n",
+       "Change %     0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "id": "fb2601d0",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(757, 8)"
+      ]
+     },
+     "execution_count": 65,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6c8eb4ec",
+   "metadata": {},
+   "source": [
+    "# Create one more column using Change % column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "d4462573",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data['Return'] = data['Change %'].apply(lambda x: 1 if x >= 0 else 0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "5e6cdeb6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Date</th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "      <th>Change %</th>\n",
+       "      <th>Return</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>46674</th>\n",
+       "      <td>08-02-2019</td>\n",
+       "      <td>14.02</td>\n",
+       "      <td>14.020</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46675</th>\n",
+       "      <td>11-02-2019</td>\n",
+       "      <td>14.25</td>\n",
+       "      <td>14.420</td>\n",
+       "      <td>14.250</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>1.928575</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46676</th>\n",
+       "      <td>12-02-2019</td>\n",
+       "      <td>14.31</td>\n",
+       "      <td>14.410</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.350380</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46677</th>\n",
+       "      <td>13-02-2019</td>\n",
+       "      <td>14.06</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.050</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>-0.132682</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>46678</th>\n",
+       "      <td>14-02-2019</td>\n",
+       "      <td>14.52</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.497</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>2.790016</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Date   Open    High     Low   Close  Adj Close   Volume  \\\n",
+       "46674  08-02-2019  14.02  14.020  14.000  14.000     14.000  16300.0   \n",
+       "46675  11-02-2019  14.25  14.420  14.250  14.270     14.270  16300.0   \n",
+       "46676  12-02-2019  14.31  14.410  14.270  14.320     14.320  16300.0   \n",
+       "46677  13-02-2019  14.06  14.301  14.050  14.301     14.301  16300.0   \n",
+       "46678  14-02-2019  14.52  14.700  14.497  14.700     14.700  16300.0   \n",
+       "\n",
+       "       Change %  Return  \n",
+       "46674  0.000000       1  \n",
+       "46675  1.928575       1  \n",
+       "46676  0.350380       1  \n",
+       "46677 -0.132682       0  \n",
+       "46678  2.790016       1  "
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "07bf058d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1    395\n",
+       "0    362\n",
+       "Name: Return, dtype: int64"
+      ]
+     },
+     "execution_count": 68,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['Return'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9ddc7692",
+   "metadata": {},
+   "source": [
+    "# Convert Date column datatype to date from object"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "id": "b17dac75",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "Int64Index: 757 entries, 46674 to 47430\n",
+      "Data columns (total 9 columns):\n",
+      " #   Column     Non-Null Count  Dtype         \n",
+      "---  ------     --------------  -----         \n",
+      " 0   Date       757 non-null    datetime64[ns]\n",
+      " 1   Open       757 non-null    float64       \n",
+      " 2   High       757 non-null    float64       \n",
+      " 3   Low        757 non-null    float64       \n",
+      " 4   Close      757 non-null    float64       \n",
+      " 5   Adj Close  757 non-null    float64       \n",
+      " 6   Volume     757 non-null    float64       \n",
+      " 7   Change %   757 non-null    float64       \n",
+      " 8   Return     757 non-null    int64         \n",
+      "dtypes: datetime64[ns](1), float64(7), int64(1)\n",
+      "memory usage: 59.1 KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "data[\"Date\"]=pd.to_datetime(data['Date'])    \n",
+    "\n",
+    "data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "id": "c9f06e3c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data = data.set_index(\"Date\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "id": "c25cabb5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "      <th>Change %</th>\n",
+       "      <th>Return</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Date</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2019-08-02</th>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.020000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>14.000000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-11-02</th>\n",
+       "      <td>14.250000</td>\n",
+       "      <td>14.420000</td>\n",
+       "      <td>14.250000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>1.928575</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-12-02</th>\n",
+       "      <td>14.310000</td>\n",
+       "      <td>14.410000</td>\n",
+       "      <td>14.270000</td>\n",
+       "      <td>14.320000</td>\n",
+       "      <td>14.320000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.350380</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-02-13</th>\n",
+       "      <td>14.060000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>14.050000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>14.301000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>-0.132682</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-02-14</th>\n",
+       "      <td>14.520000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>14.497000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>14.700000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>2.790016</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022-02-02</th>\n",
+       "      <td>19.639999</td>\n",
+       "      <td>19.639999</td>\n",
+       "      <td>19.200001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>2.055885</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022-03-02</th>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>19.360001</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022-04-02</th>\n",
+       "      <td>18.490000</td>\n",
+       "      <td>18.500999</td>\n",
+       "      <td>17.968000</td>\n",
+       "      <td>18.010000</td>\n",
+       "      <td>18.010000</td>\n",
+       "      <td>20800.0</td>\n",
+       "      <td>-6.973142</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022-07-02</th>\n",
+       "      <td>18.379999</td>\n",
+       "      <td>18.410000</td>\n",
+       "      <td>18.219999</td>\n",
+       "      <td>18.350000</td>\n",
+       "      <td>18.350000</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>1.887841</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022-08-02</th>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>18.488001</td>\n",
+       "      <td>16300.0</td>\n",
+       "      <td>0.752046</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>757 rows × 8 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                 Open       High        Low      Close  Adj Close   Volume  \\\n",
+       "Date                                                                         \n",
+       "2019-08-02  14.020000  14.020000  14.000000  14.000000  14.000000  16300.0   \n",
+       "2019-11-02  14.250000  14.420000  14.250000  14.270000  14.270000  16300.0   \n",
+       "2019-12-02  14.310000  14.410000  14.270000  14.320000  14.320000  16300.0   \n",
+       "2019-02-13  14.060000  14.301000  14.050000  14.301000  14.301000  16300.0   \n",
+       "2019-02-14  14.520000  14.700000  14.497000  14.700000  14.700000  16300.0   \n",
+       "...               ...        ...        ...        ...        ...      ...   \n",
+       "2022-02-02  19.639999  19.639999  19.200001  19.360001  19.360001  16300.0   \n",
+       "2022-03-02  19.360001  19.360001  19.360001  19.360001  19.360001  16300.0   \n",
+       "2022-04-02  18.490000  18.500999  17.968000  18.010000  18.010000  20800.0   \n",
+       "2022-07-02  18.379999  18.410000  18.219999  18.350000  18.350000  16300.0   \n",
+       "2022-08-02  18.488001  18.488001  18.488001  18.488001  18.488001  16300.0   \n",
+       "\n",
+       "            Change %  Return  \n",
+       "Date                          \n",
+       "2019-08-02  0.000000       1  \n",
+       "2019-11-02  1.928575       1  \n",
+       "2019-12-02  0.350380       1  \n",
+       "2019-02-13 -0.132682       0  \n",
+       "2019-02-14  2.790016       1  \n",
+       "...              ...     ...  \n",
+       "2022-02-02  2.055885       1  \n",
+       "2022-03-02  0.000000       1  \n",
+       "2022-04-02 -6.973142       0  \n",
+       "2022-07-02  1.887841       1  \n",
+       "2022-08-02  0.752046       1  \n",
+       "\n",
+       "[757 rows x 8 columns]"
+      ]
+     },
+     "execution_count": 71,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2b022d5b",
+   "metadata": {},
+   "source": [
+    "# Split Independent and Dependent (X and Y) variables"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "cf0ef6a2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = data.drop(['Change %', 'Return'], axis = 1)\n",
+    "y = data['Return']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "id": "ff07f06a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Date</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2019-08-02</th>\n",
+       "      <td>14.02</td>\n",
+       "      <td>14.020</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>14.000</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-11-02</th>\n",
+       "      <td>14.25</td>\n",
+       "      <td>14.420</td>\n",
+       "      <td>14.250</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-12-02</th>\n",
+       "      <td>14.31</td>\n",
+       "      <td>14.410</td>\n",
+       "      <td>14.270</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>14.320</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-02-13</th>\n",
+       "      <td>14.06</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.050</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>14.301</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019-02-14</th>\n",
+       "      <td>14.52</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.497</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>14.700</td>\n",
+       "      <td>16300.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Open    High     Low   Close  Adj Close   Volume\n",
+       "Date                                                         \n",
+       "2019-08-02  14.02  14.020  14.000  14.000     14.000  16300.0\n",
+       "2019-11-02  14.25  14.420  14.250  14.270     14.270  16300.0\n",
+       "2019-12-02  14.31  14.410  14.270  14.320     14.320  16300.0\n",
+       "2019-02-13  14.06  14.301  14.050  14.301     14.301  16300.0\n",
+       "2019-02-14  14.52  14.700  14.497  14.700     14.700  16300.0"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "9b0c4f07",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Date\n",
+       "2019-08-02    1\n",
+       "2019-11-02    1\n",
+       "2019-12-02    1\n",
+       "2019-02-13    0\n",
+       "2019-02-14    1\n",
+       "Name: Return, dtype: int64"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f4e032cb",
+   "metadata": {},
+   "source": [
+    "# Spliting the dataset into training set and test set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "dae7f017",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.model_selection import train_test_split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "82497207",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = y, test_size = .10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "40f8d2e2",
+   "metadata": {},
+   "source": [
+    "# Normalize the data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "f7d378c6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sc = StandardScaler()\n",
+    "normed_X_train = pd.DataFrame(sc.fit_transform(X_train), columns = X.columns)\n",
+    "normed_X_test = pd.DataFrame(sc.fit_transform(X_test), columns = X.columns)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "37a76368",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Normalized X-Train Shape: (681, 6)\n",
+      "Y-Train Shape: (681,)\n",
+      "Normalized X-Test Shape: (76, 6)\n",
+      "Y-Test Shape: (76,)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('Normalized X-Train Shape:', normed_X_train.shape)\n",
+    "print('Y-Train Shape:', y_train.shape)\n",
+    "print('Normalized X-Test Shape:', normed_X_test.shape)\n",
+    "print('Y-Test Shape:', y_test.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "57d381af",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0.067936</td>\n",
+       "      <td>0.074511</td>\n",
+       "      <td>-0.134050</td>\n",
+       "      <td>-0.182520</td>\n",
+       "      <td>-0.182520</td>\n",
+       "      <td>-0.158353</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>-1.189183</td>\n",
+       "      <td>-1.183027</td>\n",
+       "      <td>-1.152394</td>\n",
+       "      <td>-1.185332</td>\n",
+       "      <td>-1.185332</td>\n",
+       "      <td>-0.158353</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>-1.131051</td>\n",
+       "      <td>-1.109265</td>\n",
+       "      <td>-1.090587</td>\n",
+       "      <td>-1.073748</td>\n",
+       "      <td>-1.073748</td>\n",
+       "      <td>-0.158353</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0.477771</td>\n",
+       "      <td>0.466238</td>\n",
+       "      <td>0.488435</td>\n",
+       "      <td>0.431921</td>\n",
+       "      <td>0.431921</td>\n",
+       "      <td>-0.158353</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0.364413</td>\n",
+       "      <td>0.336618</td>\n",
+       "      <td>0.402642</td>\n",
+       "      <td>0.382649</td>\n",
+       "      <td>0.382649</td>\n",
+       "      <td>-0.158353</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       Open      High       Low     Close  Adj Close    Volume\n",
+       "0  0.067936  0.074511 -0.134050 -0.182520  -0.182520 -0.158353\n",
+       "1 -1.189183 -1.183027 -1.152394 -1.185332  -1.185332 -0.158353\n",
+       "2 -1.131051 -1.109265 -1.090587 -1.073748  -1.073748 -0.158353\n",
+       "3  0.477771  0.466238  0.488435  0.431921   0.431921 -0.158353\n",
+       "4  0.364413  0.336618  0.402642  0.382649   0.382649 -0.158353"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "normed_X_train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "707c52c7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Open</th>\n",
+       "      <th>High</th>\n",
+       "      <th>Low</th>\n",
+       "      <th>Close</th>\n",
+       "      <th>Adj Close</th>\n",
+       "      <th>Volume</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-1.495551</td>\n",
+       "      <td>-1.519833</td>\n",
+       "      <td>-1.472239</td>\n",
+       "      <td>-1.502615</td>\n",
+       "      <td>-1.502615</td>\n",
+       "      <td>-0.306799</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.841956</td>\n",
+       "      <td>0.835174</td>\n",
+       "      <td>0.899237</td>\n",
+       "      <td>0.860495</td>\n",
+       "      <td>0.860495</td>\n",
+       "      <td>-0.306799</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.052030</td>\n",
+       "      <td>0.036677</td>\n",
+       "      <td>-0.218094</td>\n",
+       "      <td>0.052437</td>\n",
+       "      <td>0.052437</td>\n",
+       "      <td>0.800373</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0.021443</td>\n",
+       "      <td>-0.010507</td>\n",
+       "      <td>0.081476</td>\n",
+       "      <td>0.045620</td>\n",
+       "      <td>0.045620</td>\n",
+       "      <td>-0.306799</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0.771802</td>\n",
+       "      <td>0.756860</td>\n",
+       "      <td>0.798050</td>\n",
+       "      <td>0.813631</td>\n",
+       "      <td>0.813631</td>\n",
+       "      <td>-0.306799</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       Open      High       Low     Close  Adj Close    Volume\n",
+       "0 -1.495551 -1.519833 -1.472239 -1.502615  -1.502615 -0.306799\n",
+       "1  0.841956  0.835174  0.899237  0.860495   0.860495 -0.306799\n",
+       "2  0.052030  0.036677 -0.218094  0.052437   0.052437  0.800373\n",
+       "3  0.021443 -0.010507  0.081476  0.045620   0.045620 -0.306799\n",
+       "4  0.771802  0.756860  0.798050  0.813631   0.813631 -0.306799"
+      ]
+     },
+     "execution_count": 80,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "normed_X_test.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6d1e8737",
+   "metadata": {},
+   "source": [
+    "# Random Forest Classifier Model Fitting"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "fee3c9c3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn import model_selection\n",
+    "from sklearn.ensemble import RandomForestClassifier"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5a1a6391",
+   "metadata": {},
+   "source": [
+    "(i) Random Forest Model Creation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "8b7cff4d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "RandomForestClassifier(max_depth=10)"
+      ]
+     },
+     "execution_count": 82,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rfc = RandomForestClassifier(max_depth=10)\n",
+    "rfc.fit(normed_X_train,y_train)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a6ecd28e",
+   "metadata": {},
+   "source": [
+    "(ii) Predictions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "3be5651a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rfc_predict = rfc.predict(normed_X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "31d8d78b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0,\n",
+       "       0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,\n",
+       "       0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1,\n",
+       "       1, 1, 0, 1, 1, 0, 1, 1, 1, 0], dtype=int64)"
+      ]
+     },
+     "execution_count": 84,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rfc_predict"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "ed21cbbb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Open</th>\n",
+       "      <td>0.221111</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Adj Close</th>\n",
+       "      <td>0.185740</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>High</th>\n",
+       "      <td>0.181560</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Low</th>\n",
+       "      <td>0.173942</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Close</th>\n",
+       "      <td>0.169512</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Volume</th>\n",
+       "      <td>0.068134</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  0\n",
+       "Open       0.221111\n",
+       "Adj Close  0.185740\n",
+       "High       0.181560\n",
+       "Low        0.173942\n",
+       "Close      0.169512\n",
+       "Volume     0.068134"
+      ]
+     },
+     "execution_count": 85,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pd.DataFrame(rfc.feature_importances_, index=X_train.columns).sort_values(by=0, ascending=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2bb6e5b",
+   "metadata": {},
+   "source": [
+    "# Cross Validation Score and Confusion Matrix"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "id": "239347a4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import cross_val_score\n",
+    "from sklearn.metrics import classification_report, confusion_matrix"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "648cf2dd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rfc_cv_score = cross_val_score(rfc, X, y, cv=10, scoring='roc_auc')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "c0f152bc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== Confusion Matrix ===\n",
+      "[[23 13]\n",
+      " [10 30]]\n",
+      "\n",
+      "\n",
+      "=== Classification Report ===\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.70      0.64      0.67        36\n",
+      "           1       0.70      0.75      0.72        40\n",
+      "\n",
+      "    accuracy                           0.70        76\n",
+      "   macro avg       0.70      0.69      0.69        76\n",
+      "weighted avg       0.70      0.70      0.70        76\n",
+      "\n",
+      "\n",
+      "\n",
+      "=== All AUC Scores ===\n",
+      "[0.47534722 0.50520833 0.52430556 0.69375    0.56875    0.64830215\n",
+      " 0.44975745 0.59401709 0.55519943 0.63710826]\n",
+      "\n",
+      "\n",
+      "=== Mean AUC Score ===\n",
+      "Mean AUC Score - Random Forest:  0.5651745495495495\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"=== Confusion Matrix ===\")\n",
+    "print(confusion_matrix(y_test, rfc_predict))\n",
+    "print('\\n')\n",
+    "print(\"=== Classification Report ===\")\n",
+    "print(classification_report(y_test, rfc_predict))\n",
+    "print('\\n')\n",
+    "print(\"=== All AUC Scores ===\")\n",
+    "print(rfc_cv_score)\n",
+    "print('\\n')\n",
+    "print(\"=== Mean AUC Score ===\")\n",
+    "print(\"Mean AUC Score - Random Forest: \", rfc_cv_score.mean())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e9391795",
+   "metadata": {},
+   "source": [
+    "# Hyper Parameters Tuning"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "3a511e24",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import RandomizedSearchCV"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9704793f",
+   "metadata": {},
+   "source": [
+    "(i) Number of trees in Random Forest"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 90,
+   "id": "3e2418e0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 10)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a13e64a9",
+   "metadata": {},
+   "source": [
+    "(ii) Number of features at every split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "id": "7ad67d58",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "max_features = ['auto', 'sqrt']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0d1e3382",
+   "metadata": {},
+   "source": [
+    "(iii) Max Depth"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "id": "c582a86a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "max_depth = [int(x) for x in np.linspace(100, 500, num = 11)]\n",
+    "max_depth.append(None)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "511c0594",
+   "metadata": {},
+   "source": [
+    "(iv) Create a Random Grid"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "id": "539df8a7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "random_grid = {\n",
+    " 'n_estimators': n_estimators,\n",
+    " 'max_features': max_features,\n",
+    " 'max_depth': max_depth\n",
+    " }"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "898d1a0c",
+   "metadata": {},
+   "source": [
+    "(v) Random Search of Parameters"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "0bf2725a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rfc_random = RandomizedSearchCV(estimator = rfc, param_distributions = random_grid, \n",
+    "                                n_iter = 30, cv = 3, verbose=2, random_state=3, n_jobs = -1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c857a22e",
+   "metadata": {},
+   "source": [
+    "(vi) Fit the model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "id": "2ddea9ee",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Fitting 3 folds for each of 30 candidates, totalling 90 fits\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "RandomizedSearchCV(cv=3, estimator=RandomForestClassifier(max_depth=10),\n",
+       "                   n_iter=30, n_jobs=-1,\n",
+       "                   param_distributions={'max_depth': [100, 140, 180, 220, 260,\n",
+       "                                                      300, 340, 380, 420, 460,\n",
+       "                                                      500, None],\n",
+       "                                        'max_features': ['auto', 'sqrt'],\n",
+       "                                        'n_estimators': [200, 400, 600, 800,\n",
+       "                                                         1000, 1200, 1400, 1600,\n",
+       "                                                         1800, 2000]},\n",
+       "                   random_state=3, verbose=2)"
+      ]
+     },
+     "execution_count": 95,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rfc_random.fit(normed_X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a9c04a7b",
+   "metadata": {},
+   "source": [
+    "(vii) Print Results"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 96,
+   "id": "74d93f1a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "RandomForestClassifier(max_depth=380, max_features='sqrt', n_estimators=1000)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(rfc_random.best_estimator_)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 97,
+   "id": "f421556d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== Confusion Matrix ===\n",
+      "[[24 12]\n",
+      " [12 28]]\n",
+      "\n",
+      "\n",
+      "=== Classification Report ===\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.67      0.67      0.67        36\n",
+      "           1       0.70      0.70      0.70        40\n",
+      "\n",
+      "    accuracy                           0.68        76\n",
+      "   macro avg       0.68      0.68      0.68        76\n",
+      "weighted avg       0.68      0.68      0.68        76\n",
+      "\n",
+      "\n",
+      "\n",
+      "=== All AUC Scores ===\n",
+      "[0.52118056 0.50486111 0.54652778 0.69444444 0.56979167 0.64310464\n",
+      " 0.49341649 0.62820513 0.56517094 0.64138177]\n",
+      "\n",
+      "\n",
+      "=== Mean AUC Score ===\n",
+      "Mean AUC Score - Random Forest:  0.5808084526834526\n"
+     ]
+    }
+   ],
+   "source": [
+    "rfc = rfc_random.best_estimator_\n",
+    "rfc.fit(normed_X_train,y_train)\n",
+    "rfc_predict = rfc.predict(normed_X_test)\n",
+    "rfc_cv_score = cross_val_score(rfc, X, y, cv=10, scoring='roc_auc')\n",
+    "print(\"=== Confusion Matrix ===\")\n",
+    "print(confusion_matrix(y_test, rfc_predict))\n",
+    "print('\\n')\n",
+    "print(\"=== Classification Report ===\")\n",
+    "print(classification_report(y_test, rfc_predict))\n",
+    "print('\\n')\n",
+    "print(\"=== All AUC Scores ===\")\n",
+    "print(rfc_cv_score)\n",
+    "print('\\n')\n",
+    "print(\"=== Mean AUC Score ===\")\n",
+    "print(\"Mean AUC Score - Random Forest: \", rfc_cv_score.mean())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4e63b5a9",
+   "metadata": {},
+   "source": [
+    "# Conclusion:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3bc2f370",
+   "metadata": {},
+   "source": [
+    "(i) We are getting the less accuracy since the data had only 757 data points.\n",
+    "\n",
+    "(ii) We could increase the accuracy of the model if we have more data points on a particular symbol."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5fec82f5",
+   "metadata": {},
+   "source": [
+    "                                                                                                    Author's : TEAM B\n",
+    "\n",
+    "                                                                                                       Poornima Devi\n",
+    "                                                                                                    Tito Langat Kipkirui\n",
+    "                                                                                                         Tanvi Mehta\n",
+    "                                                                                                       Joy Chakraborty\n",
+    "                                                                                                       Daphila Kharpuri\n",
+    "                                                                                                        Santhosh Kumar"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
